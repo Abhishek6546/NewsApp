@@ -1,8 +1,23 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
   const [menu, setMenu] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    navigate("/");
+  };
 
   const navItems = [
     { id: 1, text: "Home", path: "/" },
@@ -34,22 +49,35 @@ function Navbar() {
                 </Link>
               </li>
             ))}
-            <li>
-              <Link
-                to="/login"
-                className="text-teal-500 border border-teal-500 px-4 py-1 rounded hover:bg-teal-100"
-              >
-                Login
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/signup"
-                className="text-white bg-teal-500 px-4 py-1 rounded hover:bg-teal-600"
-              >
-                Signup
-              </Link>
-            </li>
+            {!isLoggedIn ? (
+              <>
+                <li>
+                  <Link
+                    to="/login"
+                    className="text-teal-500 border border-teal-500 px-4 py-1 rounded hover:bg-teal-100"
+                  >
+                    Login
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/signup"
+                    className="text-white bg-teal-500 px-4 py-1 rounded hover:bg-teal-600"
+                  >
+                    Signup
+                  </Link>
+                </li>
+              </>
+            ) : (
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="text-white bg-red-500 px-3 py-2 rounded hover:bg-red-600"
+                >
+                  Logout
+                </button>
+              </li>
+            )}
           </ul>
 
           {/* Hamburger Menu Toggle */}
@@ -75,24 +103,37 @@ function Navbar() {
               </li>
             ))}
             {/* Mobile Login/Signup */}
-            <li>
-              <Link
-                to="/login"
-                onClick={() => setMenu(false)}
-                className="text-teal-500 px-4 py-2 rounded border border-teal-500 hover:bg-teal-100 "
-              >
-                Login
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/signup"
-                onClick={() => setMenu(false)}
-                className="text-white bg-teal-500 px-3 py-2 rounded hover:bg-teal-600"
-              >
-                Signup
-              </Link>
-            </li>
+            {!isLoggedIn ? (
+              <>
+                <li>
+                  <Link
+                    to="/login"
+                    onClick={() => setMenu(false)}
+                    className="text-teal-500 px-4 py-2 rounded border border-teal-500 hover:bg-teal-100 "
+                  >
+                    Login
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/signup"
+                    onClick={() => setMenu(false)}
+                    className="text-white bg-teal-500 px-3 py-2 rounded hover:bg-teal-600"
+                  >
+                    Signup
+                  </Link>
+                </li>
+              </>
+            ) : (
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="text-white bg-red-500 px-3 py-2 rounded hover:bg-red-600"
+                >
+                  Logout
+                </button>
+              </li>
+            )}
           </ul>
         </div>
       )}
